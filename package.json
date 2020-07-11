@@ -2,9 +2,9 @@
   "name": "svelte-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public"
+    "start": "del-cli dist && rollup --config --watch",
+    "build": "del-cli dist && rollup --config"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^13.0.0",
