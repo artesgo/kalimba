@@ -1,9 +1,12 @@
 <script>
+	import { timer } from './timer';
 	export let name;
+
 </script>
 
 <main>
 	<h1>Hello {name}!</h1>
+	<p>{$timer}</p>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 </main>
 

@@ -5,6 +5,8 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import html from 'rollup-plugin-html2';
 import serve from 'rollup-plugin-serve';
+import typescript from '@rollup/plugin-typescript';
+
 require('dotenv').config();
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -16,6 +18,7 @@ const plugins = [
 		dev: isDev,
 		extensions: ['.svelte'],
 	}),
+	typescript(),
 	resolve({
 		browser: true,
 		dedupe: ['svelte'],
