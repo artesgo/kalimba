@@ -46,7 +46,7 @@ if (isDev) {
 }
 
 module.exports = {
-	input: 'src/main.js',
+	input: 'src/main.ts',
 	output: {
 		name: 'bundle',
 		file: 'dist/bundle.js',
