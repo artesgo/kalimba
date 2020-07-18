@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import html from 'rollup-plugin-html2';
 import serve from 'rollup-plugin-serve';
 import typescript from '@rollup/plugin-typescript';
+import preprocess from 'svelte-preprocess';
 
 require('dotenv').config();
 
@@ -17,6 +18,7 @@ const plugins = [
 	svelte({
 		dev: isDev,
 		extensions: ['.svelte'],
+		preprocess: preprocess(),
 	}),
 	typescript(),
 	resolve({
