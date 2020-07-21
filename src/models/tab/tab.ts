@@ -6,4 +6,7 @@ export class Tab {
     author: string;
     notes: Note[];
     current: number;
+    offset: number;
+    playing: boolean;
+    paused: boolean;
 }

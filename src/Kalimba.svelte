@@ -1,21 +1,23 @@
 <script lang="typescript">
 
-	import GlobalStyles from './GlobalStyles.svelte';
+	import GlobalStyles from './components/GlobalStyles.svelte';
+	import KalimbaControls from './components/KalimbaControls.svelte';
+	import KalimbaNote from './components/KalimbaNote.svelte';
 
 	import { onMount } from 'svelte';
 	import { tweened, spring } from 'svelte/motion';
+	import { fly } from 'svelte/transition';
 	import { scale } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
-	import { truncator } from './utils';
+	import { cubicOut, linear } from 'svelte/easing';
+	import { truncator } from './utils/utils';
 
 	import { Note } from './models/tab/note';
 	import { Arc2d } from './models/shapes/arc2d';
 	import { Rect2d } from './models/shapes/rect2d';
  	import { Object2d } from './models/shapes/object2d';
-	// import { collisionReport, updatePositions }  from './game-loop';
 
-	import { progress, notes } from './state/tab.selectors';
-	import { insertNote } from './state/tab.facade';
+	import { progress, notes, offset } from './state/tab.selectors';
+	import { insertNote, updateOffset } from './state/tab.facade';
 
 	let clicks = 0;
 	let tines: Rect2d[] = [];
@@ -36,30 +38,20 @@
 
 	const tineLabels = ['d3', 'b2', 'g2', 'e2', 'c2', 'a1', 'f1', 'd1', 'c1', 'e1', 'g1', 'b1', 'd2', 'f2', 'a2', 'c3', 'e3'];
 
-	let boardWidth = 800;
-	let boardHeight = 500;
+	let boardHeight = 600;
 	let laneWidth = 20;
 	let noteRadius = laneWidth / 2 - 2;
+	let boardWidth = (laneWidth + 1) * tineLabels.length + 40;
 	let noteLength = 4;
+	let pieceDuration = 6000;
 
 	onMount(() => {
-		// let frame;
 		renderTines();
 		renderHighlighter();
-
-		// (function loop() {
-		// 	frame = requestAnimationFrame(loop);
-		// 	updatePositions();
-		// 	collisionReport();
-		// }());
-
-		// return () => {
-		// 	cancelAnimationFrame(frame);
-		// }
 	});
 
 	// note management
-	function checkNote(x, y): boolean {
+	function hasNote(x, y): boolean {
 		// check note array based on curr position
 		return false;
 	}
@@ -68,25 +60,32 @@
 		// let note = new Arc2d(31, 24, noteRadius, true);
 		// notes = [ ...notes, note ];
 		if (currentPositionTine > 0 && currentPositionTine <= tineLabels.length) {
-			let note = new Note(
-				currentPositionTine*(laneWidth+1) + 10,
-				currentPosition*laneWidth + 10,
-				noteRadius, true);
-			note.name = tineLabels[currentPositionTine];
-			insertNote(note);
+			if (!hasNote(currentPositionTine, currentPosition)) {
+				// TODO: currentPosition needs offset when going through the song
+				let note = new Note(
+					currentPositionTine,
+					currentPosition + $offset,
+					noteRadius, true);
+				note.name = tineLabels[currentPositionTine - 1];
+				insertNote(note);
+			}
 		}
 	}
 
 	// cursor position
 	let x = 0; let y = 0;
 	function getPosition(event) {
-		x = event.clientX;
-		y = event.clientY;
+		x = event.layerX;
+		y = event.layerY;
+
+		// get y axis position
 		currentPosition = truncator(y / laneWidth, 0);
 		if (currentPosition !== previousPosition) {
 			highlightPosition.set(currentPosition * laneWidth);
 			previousPosition = currentPosition;
 		}
+
+		// get x axis position
 		let newPosition = truncator(x / (laneWidth+1), 0);
 		if (newPosition > 0 && newPosition < 19) {
 			currentPositionTine = newPosition;
@@ -94,6 +93,7 @@
 			currentPositionTine = 18;
 		}
 		if (currentPositionTine !== previousPositionTine) {
+		// update highlight position
 			tinelightPosition.set(currentPositionTine * (laneWidth+1));
 			previousPositionTine = currentPositionTine;
 		}
@@ -121,8 +121,22 @@
 		}
 	}
 
-	// controls
+	let yPosition = [];
+	function getNoteX(note: Note): number {
+		return note.x*(laneWidth+1) + 10;
+	}
 
+	function getNoteY(note: Note) {
+		return note.y*laneWidth + 10;
+	}
+	function up() {
+		updateOffset(16);
+	}
+	function down() {
+		if ($offset > 0) {
+			updateOffset(-16);
+		}
+	}
 </script>
 
 <main>
@@ -151,23 +165,29 @@
 			></rect>
 		{/if}
 		<!-- notes -->
-		{#each $notes as note}
-			<circle
-				cx={note.x} cy={note.y} r={note['radius']}
-				fill="#FC0"
-				stroke="#000"
-			>
-				<text>{note.name}</text>
-			</circle>
+		{#each $notes as note (note.id)}
+			<KalimbaNote note={note} laneWidth={laneWidth} />
 		{/each}
 	</svg>
-	<div>line: {currentPosition}, tine: {currentPositionTine} x: {x}, y: {y} </div>
-	<progress value={$progress}></progress>
+	<section>
+		<KalimbaControls/>
+		<div>
+			<button on:click={up}>Up</button>
+			{$offset}
+			<button on:click={down}>Down</button>
+		</div>
+		<div>line: {currentPosition}, tine: {currentPositionTine} x: {x}, y: {y} </div>
+    	<progress value={$progress}></progress>
+
+
+	</section>
 </main>
 
 <GlobalStyles/>
-
 <style>
+	main {
+		display: flex;
+	}
 	svg {
 		display: block;
 		background-color: #666;

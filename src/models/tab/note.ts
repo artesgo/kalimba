@@ -10,7 +10,10 @@ export class Note implements Arc2d {
         this.x = x, this.y = y;
         this.radius = radius;
         this.interactive = interactive;
+        this.id = Note._id++;
     }
+    static _id: number = 0;
+    id: number;
     name: string;
     tine: number;
     line: number;

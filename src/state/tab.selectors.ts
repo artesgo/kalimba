@@ -21,3 +21,28 @@ export const notes = derived(
     tabStore,
     $tabStore => $tabStore.notes
 );
+
+export const offset = derived(
+    tabStore,
+    $tabStore => $tabStore.offset
+)
+
+export const duration = derived(
+    tabStore,
+    $tabStore => {
+        let lastNote = Math.max.apply(Math, $tabStore.notes.map(
+            function(obj) {
+                return obj.y;
+            }
+        ));
+        return lastNote;
+    }
+);
+
+export const playing = derived(
+    tabStore,
+    $tabStore => ({
+        playing: $tabStore.playing,
+        paused: $tabStore.paused
+    })
+);
