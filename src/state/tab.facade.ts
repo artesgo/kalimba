@@ -2,23 +2,40 @@
 
 import { tabStore } from "./tab.store";
 import { Note } from "../models/tab/note";
+import { progress, notes, offset } from './tab.selectors';
+import { Observable } from "rxjs";
+import { toObservable } from "../utils/observable";
 
-export function insertNote(note: Note) {
-    console.log('insert', note)
+/**
+ * Update Store
+ */
+function insertNote(note: Note) {
     tabStore.update(tab => ({
         ...tab,
         notes: [...tab.notes, note]
     }));
 }
 
-export function updateOffset(offset: number) {
+function deleteNote(tine: number, position: number) {
+    tabStore.update(tab => ({
+        ...tab,
+        notes: [...removeNote(tab.notes, tine, position)]
+    }));
+}
+
+function removeNote(notes: Note[], x: number, y: number) {
+    let filtered = notes.filter(note => note.x !== x || note.y !== y);
+    return filtered;
+}
+
+function updateOffset(offset: number) {
     tabStore.update(tab => ({
         ...tab,
         offset: tab.offset + offset
     }));
 }
 
-export function play() {
+function play() {
     tabStore.update(tab => ({
         ...tab,
         playing: true,
@@ -26,7 +43,7 @@ export function play() {
     }));
 }
 
-export function pause() {
+function pause() {
     tabStore.update(tab => ({
         ...tab,
         playing: false,
@@ -34,10 +51,19 @@ export function pause() {
     }));
 }
 
-export function stop() {
+function stop() {
     tabStore.update(tab => ({
         ...tab,
         playing: false,
         paused: false,
     }));
+}
+
+export {
+    insertNote,
+    deleteNote,
+    updateOffset,
+    play,
+    stop,
+    pause,
 }

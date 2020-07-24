@@ -1,5 +1,5 @@
 <script lang="typescript">
-    import { Note } from './../models/tab/note.ts';
+    import { Note } from './../models/tab/note';
     import { playing } from './../state/tab.selectors';
     import { onMount, onDestroy  } from 'svelte';
 	import { tweened, spring } from 'svelte/motion';
@@ -14,8 +14,8 @@
 	onMount(() => {
         let initialPosition = getNoteY(note);
         y = tweened(initialPosition, {
-           duration: 100000,
-           easing: linear
+            duration: 100000,
+            easing: linear
         });
 
         unsub = playing.subscribe((playback) => {
@@ -27,13 +27,13 @@
                 y.set(initialPosition);
             } else {
                 y.set(initialPosition, {
-                    duration: 1000
+                    duration: 500
                 });
             }
         });
     });
 
-    onDestroy(unsub);
+    onDestroy(() => unsub);
 
 	function getNoteX(note: Note): number {
 		return note.x*(laneWidth+1) + 10;
@@ -48,11 +48,13 @@
 	}
 </script>
 
-<circle
-    cx={getNoteX(note)} cy={$y} r={note['radius']}
-    fill="#FC0"
-    stroke="#666">
-</circle>
-<text x={getNoteX(note) - 5} y={$y + 4}>
-    {getNoteLabel(note.name)}
-</text>
+{#if y}
+    <circle
+        cx={getNoteX(note)} cy={$y} r={note['radius']}
+        fill="#FC0"
+        stroke="#666">
+    </circle>
+    <text x={getNoteX(note) - 5} y={$y + 4}>
+        {getNoteLabel(note.name)}
+    </text>
+{/if}

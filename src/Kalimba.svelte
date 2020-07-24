@@ -9,6 +9,9 @@
 	import { fly } from 'svelte/transition';
 	import { scale } from 'svelte/transition';
 	import { cubicOut, linear } from 'svelte/easing';
+	import { Observable, Subject } from 'rxjs';
+	import { take, tap } from 'rxjs/operators';
+
 	import { truncator } from './utils/utils';
 
 	import { Note } from './models/tab/note';
@@ -17,9 +20,8 @@
  	import { Object2d } from './models/shapes/object2d';
 
 	import { progress, notes, offset } from './state/tab.selectors';
-	import { insertNote, updateOffset } from './state/tab.facade';
+	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
 
-	let clicks = 0;
 	let tines: Rect2d[] = [];
 	let highlight: Rect2d;
 	let tinelight: Rect2d;
@@ -38,37 +40,50 @@
 
 	const tineLabels = ['d3', 'b2', 'g2', 'e2', 'c2', 'a1', 'f1', 'd1', 'c1', 'e1', 'g1', 'b1', 'd2', 'f2', 'a2', 'c3', 'e3'];
 
-	let boardHeight = 600;
-	let laneWidth = 20;
-	let noteRadius = laneWidth / 2 - 2;
-	let boardWidth = (laneWidth + 1) * tineLabels.length + 40;
-	let noteLength = 4;
-	let pieceDuration = 6000;
+	const boardHeight = 600;
+	const laneWidth = 20;
+	const noteRadius = laneWidth / 2 - 2;
+	const boardWidth = (laneWidth + 1) * tineLabels.length + 40;
+	const noteLength = 4;
 
 	onMount(() => {
 		renderTines();
 		renderHighlighter();
 	});
 
+	let hasNote$: Subject<boolean> = new Subject();
 	// note management
-	function hasNote(x, y): boolean {
-		// check note array based on curr position
-		return false;
+	function hasNote(x, y): void {
+		notes.subscribe(_n => {
+			let found = _n.filter(note => note.x === x && note.y === y)
+			if (found.length > 0) {
+				hasNote$.next(true);
+			} else {
+				hasNote$.next(false);
+			}
+		});
 	}
 
 	function toggleNote(): void {
 		// let note = new Arc2d(31, 24, noteRadius, true);
-		// notes = [ ...notes, note ];
 		if (currentPositionTine > 0 && currentPositionTine <= tineLabels.length) {
-			if (!hasNote(currentPositionTine, currentPosition)) {
-				// TODO: currentPosition needs offset when going through the song
-				let note = new Note(
-					currentPositionTine,
-					currentPosition + $offset,
-					noteRadius, true);
-				note.name = tineLabels[currentPositionTine - 1];
-				insertNote(note);
-			}
+			hasNote$.pipe(
+				take(1),
+			).subscribe(_hasNote => {
+				if (!_hasNote) {
+					// TODO: currentPosition needs offset when going through the song
+					let note = new Note(
+						currentPositionTine,
+						currentPosition + $offset,
+						noteRadius, true);
+					note.name = tineLabels[currentPositionTine - 1];
+					insertNote(note);
+				} else {
+					deleteNote(currentPositionTine, currentPosition);
+				}
+			});
+			
+			hasNote(currentPositionTine, currentPosition);
 		}
 	}
 
@@ -122,13 +137,7 @@
 	}
 
 	let yPosition = [];
-	function getNoteX(note: Note): number {
-		return note.x*(laneWidth+1) + 10;
-	}
 
-	function getNoteY(note: Note) {
-		return note.y*laneWidth + 10;
-	}
 	function up() {
 		updateOffset(16);
 	}
@@ -136,6 +145,11 @@
 		if ($offset > 0) {
 			updateOffset(-16);
 		}
+	}
+
+	let noteDuration;
+	function setDuration(duration: CustomEvent ) {
+		noteDuration = duration.detail['duration'];
 	}
 </script>
 
@@ -178,8 +192,6 @@
 		</div>
 		<div>line: {currentPosition}, tine: {currentPositionTine} x: {x}, y: {y} </div>
     	<progress value={$progress}></progress>
-
-
 	</section>
 </main>
 

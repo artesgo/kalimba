@@ -25,7 +25,7 @@ export const notes = derived(
 export const offset = derived(
     tabStore,
     $tabStore => $tabStore.offset
-)
+);
 
 export const duration = derived(
     tabStore,
