@@ -2,9 +2,6 @@
 
 import { tabStore } from "./tab.store";
 import { Note } from "../models/tab/note";
-import { progress, notes, offset } from './tab.selectors';
-import { Observable } from "rxjs";
-import { toObservable } from "../utils/observable";
 
 /**
  * Update Store

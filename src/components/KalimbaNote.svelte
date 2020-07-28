@@ -1,26 +1,32 @@
 <script lang="typescript">
     import { Note } from './../models/tab/note';
-    import { playing } from './../state/tab.selectors';
+    import { playing, duration } from './../state/tab.selectors';
     import { onMount, onDestroy  } from 'svelte';
 	import { tweened, spring } from 'svelte/motion';
     import { linear } from 'svelte/easing';
+    import { play } from '../utils/audio';
     
     export let laneWidth;
     export let note: Note;
     let y;
-    let duration = 5000;
+    let _duration: number;
     let unsub;
+    let unduration;
 
 	onMount(() => {
         let initialPosition = getNoteY(note);
+        playSound();
         y = tweened(initialPosition, {
-            duration: 100000,
+            duration: _duration,
             easing: linear
+        });
+        unduration = duration.subscribe(tabDuration => {
+            _duration = tabDuration;
         });
 
         unsub = playing.subscribe((playback) => {
             if (playback.playing) {
-                y.set(initialPosition+duration);
+                y.set(initialPosition+(_duration*20));
             } else if (playback.paused) {
                 // this is odd, it doesn't set back to initial, but "pauses"
                 // it's what i want, but how does it work
@@ -33,7 +39,10 @@
         });
     });
 
-    onDestroy(() => unsub);
+    onDestroy(() => {
+        unsub();
+        unduration();
+    });
 
 	function getNoteX(note: Note): number {
 		return note.x*(laneWidth+1) + 10;
@@ -45,7 +54,11 @@
     
 	function getNoteLabel(label: string): string {
 		return label.substring(0, 1);
-	}
+    }
+    
+    function playSound() {
+        play(note.name);
+    }
 </script>
 
 {#if y}

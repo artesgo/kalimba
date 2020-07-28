@@ -1,23 +1,18 @@
 <script lang="typescript">
-
 	import GlobalStyles from './components/GlobalStyles.svelte';
 	import KalimbaControls from './components/KalimbaControls.svelte';
 	import KalimbaNote from './components/KalimbaNote.svelte';
 
 	import { onMount } from 'svelte';
-	import { tweened, spring } from 'svelte/motion';
-	import { fly } from 'svelte/transition';
-	import { scale } from 'svelte/transition';
-	import { cubicOut, linear } from 'svelte/easing';
-	import { Observable, Subject } from 'rxjs';
-	import { take, tap } from 'rxjs/operators';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+	import { Subject } from 'rxjs';
+	import { take } from 'rxjs/operators';
 
 	import { truncator } from './utils/utils';
 
 	import { Note } from './models/tab/note';
-	import { Arc2d } from './models/shapes/arc2d';
 	import { Rect2d } from './models/shapes/rect2d';
- 	import { Object2d } from './models/shapes/object2d';
 
 	import { progress, notes, offset } from './state/tab.selectors';
 	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
@@ -38,7 +33,7 @@
 		easing: cubicOut
 	});
 
-	const tineLabels = ['d3', 'b2', 'g2', 'e2', 'c2', 'a1', 'f1', 'd1', 'c1', 'e1', 'g1', 'b1', 'd2', 'f2', 'a2', 'c3', 'e3'];
+	const tineLabels = ['d6', 'b5', 'g5', 'e5', 'c5', 'a4', 'f4', 'd4', 'c4', 'e4', 'g4', 'b4', 'd5', 'f5', 'a5', 'c6', 'e6'];
 
 	const boardHeight = 600;
 	const laneWidth = 20;
@@ -65,7 +60,6 @@
 	}
 
 	function toggleNote(): void {
-		// let note = new Arc2d(31, 24, noteRadius, true);
 		if (currentPositionTine > 0 && currentPositionTine <= tineLabels.length) {
 			hasNote$.pipe(
 				take(1),
