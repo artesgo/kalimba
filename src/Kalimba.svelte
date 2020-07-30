@@ -13,7 +13,7 @@
 
 	import { Note } from './models/tab/note';
 	import { Rect2d } from './models/shapes/rect2d';
-
+ 
 	import { progress, notes, offset } from './state/tab.selectors';
 	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
 

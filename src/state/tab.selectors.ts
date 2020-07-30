@@ -1,5 +1,6 @@
 import { tabStore } from "./tab.store";
 import { derived } from "svelte/store";
+import { Note } from "../models/tab/note";
 
 // you could think of these as selectors
 export const totalNotes = derived(
@@ -27,22 +28,24 @@ export const offset = derived(
     $tabStore => $tabStore.offset
 );
 
-export const duration = derived(
+export const playback = derived(
     tabStore,
     $tabStore => {
-        let lastNote = Math.max.apply(Math, $tabStore.notes.map(
-            function(obj) {
-                return obj.y;
-            }
-        ));
-        return lastNote;
+        return {
+            playing: $tabStore.playing,
+            paused: $tabStore.paused,
+            duration: getDuration($tabStore.notes),
+            tempo: $tabStore.tempo,
+        }
     }
 );
 
-export const playing = derived(
-    tabStore,
-    $tabStore => ({
-        playing: $tabStore.playing,
-        paused: $tabStore.paused
-    })
-);
+function getDuration(notes: Note[]) {
+    if (notes.length > 1) {
+        const sorted = notes.sort((a, b) => (b.y - a.y));
+        const [first, ...rest] = sorted;
+        const [last, ...other] = rest.reverse();
+        return first.y - last.y;
+    }
+    return 0;
+}

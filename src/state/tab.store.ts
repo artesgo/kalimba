@@ -2,7 +2,7 @@ import { writable, readable } from 'svelte/store';
 import { Tab } from '../models/tab/tab';
 
 const initialState: Tab = {
-    tempo: 0,
+    tempo: 120,
     name: 'untitled',
     author: 'anonymous',
     notes: [],

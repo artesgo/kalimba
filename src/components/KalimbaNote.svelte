@@ -1,6 +1,6 @@
 <script lang="typescript">
     import { Note } from './../models/tab/note';
-    import { playing, duration } from './../state/tab.selectors';
+    import { playback } from './../state/tab.selectors';
     import { onMount, onDestroy  } from 'svelte';
 	import { tweened, spring } from 'svelte/motion';
     import { linear } from 'svelte/easing';
@@ -9,24 +9,20 @@
     export let laneWidth;
     export let note: Note;
     let y;
-    let _duration: number;
     let unsub;
     let unduration;
 
 	onMount(() => {
         let initialPosition = getNoteY(note);
         playSound();
-        y = tweened(initialPosition, {
-            duration: _duration,
-            easing: linear
-        });
-        unduration = duration.subscribe(tabDuration => {
-            _duration = tabDuration;
-        });
+        unsub = playback.subscribe((playback) => {
+            y = tweened(initialPosition, {
+                duration: playback.duration * 1000 / (playback.tempo / 60),
+                easing: linear
+            });
 
-        unsub = playing.subscribe((playback) => {
             if (playback.playing) {
-                y.set(initialPosition+(_duration*20));
+                y.set(initialPosition+(playback.duration * 20));
             } else if (playback.paused) {
                 // this is odd, it doesn't set back to initial, but "pauses"
                 // it's what i want, but how does it work
