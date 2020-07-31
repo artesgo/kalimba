@@ -9,4 +9,5 @@ export class Tab {
     offset: number;
     playing: boolean;
     paused: boolean;
+    stopped: boolean;
 }

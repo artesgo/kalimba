@@ -37,6 +37,7 @@ function play() {
         ...tab,
         playing: true,
         paused: false,
+        stopped: false,
     }));
 }
 
@@ -45,6 +46,7 @@ function pause() {
         ...tab,
         playing: false,
         paused: true,
+        stopped: false,
     }));
 }
 
@@ -53,6 +55,7 @@ function stop() {
         ...tab,
         playing: false,
         paused: false,
+        stopped: true,
     }));
 }
 

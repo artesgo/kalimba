@@ -68,16 +68,15 @@
 					// TODO: currentPosition needs offset when going through the song
 					let note = new Note(
 						currentPositionTine,
-						currentPosition + $offset,
+						currentPosition - $offset,
 						noteRadius, true);
 					note.name = tineLabels[currentPositionTine - 1];
 					insertNote(note);
 				} else {
-					deleteNote(currentPositionTine, currentPosition);
+					deleteNote(currentPositionTine, currentPosition - $offset);
 				}
 			});
-			
-			hasNote(currentPositionTine, currentPosition);
+			hasNote(currentPositionTine, currentPosition - $offset);
 		}
 	}
 
@@ -130,20 +129,13 @@
 		}
 	}
 
-	let yPosition = [];
-
 	function up() {
-		updateOffset(16);
+		updateOffset(4);
 	}
 	function down() {
 		if ($offset > 0) {
-			updateOffset(-16);
+			updateOffset(-4);
 		}
-	}
-
-	let noteDuration;
-	function setDuration(duration: CustomEvent ) {
-		noteDuration = duration.detail['duration'];
 	}
 </script>
 
@@ -184,8 +176,12 @@
 			{$offset}
 			<button on:click={down}>Down</button>
 		</div>
-		<div>line: {currentPosition}, tine: {currentPositionTine} x: {x}, y: {y} </div>
+		<div>line: {currentPosition - $offset}, tine: {currentPositionTine} x: {x}, y: {y} </div>
     	<progress value={$progress}></progress>
+		
+		{#each $notes as note (note.id)}
+			<p>{note.y}</p>
+		{/each}
 	</section>
 </main>
 

@@ -1,43 +1,45 @@
 <script lang="typescript">
     import { Note } from './../models/tab/note';
-    import { playback } from './../state/tab.selectors';
-    import { onMount, onDestroy  } from 'svelte';
-	import { tweened, spring } from 'svelte/motion';
-    import { linear } from 'svelte/easing';
+    import { playback, offset } from './../state/tab.selectors';
+    import { onMount, onDestroy } from 'svelte';
+	import { tweened } from 'svelte/motion';
+    import { linear, cubicOut } from 'svelte/easing';
     import { play } from '../utils/audio';
     
-    export let laneWidth;
+    export let laneWidth: number;
     export let note: Note;
     let y;
-    let unsub;
-    let unduration;
-
+    let subs = [];
 	onMount(() => {
         let initialPosition = getNoteY(note);
         playSound();
-        unsub = playback.subscribe((playback) => {
-            y = tweened(initialPosition, {
-                duration: playback.duration * 1000 / (playback.tempo / 60),
-                easing: linear
-            });
+        y = tweened(initialPosition, {
+            duration: 0,
+            easing: linear
+        });
+    
+        subs.push(playback.subscribe((playback) => {
 
+            const duration = playback.duration * 1000 / (playback.tempo / 60);
             if (playback.playing) {
-                y.set(initialPosition+(playback.duration * 20));
+                y.set(initialPosition+(playback.duration * 20), {
+                    duration
+                });
             } else if (playback.paused) {
-                // this is odd, it doesn't set back to initial, but "pauses"
-                // it's what i want, but how does it work
                 y.set(initialPosition);
-            } else {
-                y.set(initialPosition, {
-                    duration: 500
+            } else if (playback.stopped) {
+                // console.log(initialPosition + (playback.offset * 20))
+                // not sure why this is off by one, should be 20
+                y.set(initialPosition + (playback.offset * 19), {
+                    duration: 100,
+                    easing: cubicOut
                 });
             }
-        });
+        }));
     });
 
     onDestroy(() => {
-        unsub();
-        unduration();
+        subs.forEach(unsub => unsub());
     });
 
 	function getNoteX(note: Note): number {
@@ -59,11 +61,17 @@
 
 {#if y}
     <circle
-        cx={getNoteX(note)} cy={$y} r={note['radius']}
+        cx={getNoteX(note)} cy={$y + $offset} r={note['radius']}
         fill="#FC0"
         stroke="#666">
     </circle>
-    <text x={getNoteX(note) - 5} y={$y + 4}>
+    <text x={getNoteX(note) - 5} y={$y + $offset + 4}>
         {getNoteLabel(note.name)}
     </text>
 {/if}
+
+<style>
+    text {
+        user-select: none;
+    }
+</style>

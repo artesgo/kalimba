@@ -10,6 +10,7 @@ const initialState: Tab = {
     offset: 0,
     playing: false,
     paused: false,
+    stopped: true,
 }
 
 // this is equivalent to initialState of ngrx

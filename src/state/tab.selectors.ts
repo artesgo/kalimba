@@ -34,8 +34,10 @@ export const playback = derived(
         return {
             playing: $tabStore.playing,
             paused: $tabStore.paused,
+            stopped: $tabStore.stopped,
             duration: getDuration($tabStore.notes),
             tempo: $tabStore.tempo,
+            offset: $tabStore.offset,
         }
     }
 );
