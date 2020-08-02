@@ -6,7 +6,6 @@ const initialState: Tab = {
     name: 'untitled',
     author: 'anonymous',
     notes: [],
-    current: 0,
     offset: 0,
     playing: false,
     paused: false,

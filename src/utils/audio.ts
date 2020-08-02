@@ -62,6 +62,9 @@ function play(sound: string, type: OscillatorType = "sine", duration: number = 2
     gainNode.connect(context.destination);
     gainNode.gain.setValueAtTime(1, context.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + duration);
+    setTimeout(() => {
+        context.close();
+    }, duration * 1000);
 }
 
 export {
