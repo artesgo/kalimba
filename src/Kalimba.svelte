@@ -14,7 +14,7 @@
 	import { Note } from './models/tab/note';
 	import { Rect2d } from './models/shapes/rect2d';
  
-	import { progress, notes, offset } from './state/tab.selectors';
+	import { notes, offset } from './state/tab.selectors';
 	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
 
 	let tines: Rect2d[] = [];
@@ -50,7 +50,7 @@
 	// note management
 	function hasNote(x, y): void {
 		notes.subscribe(_n => {
-			let found = _n.filter(note => note.x === x && note.y === y)
+			let found = _n.filter(note => note.x === x && note.y === y);
 			if (found.length > 0) {
 				hasNote$.next(true);
 			} else {
@@ -120,9 +120,29 @@
 		}
 	}
 
+	let _fillC = true;
+	function fill(c: boolean) {
+		_fillC = c;
+		renderTines();
+	}
 	function getTineFill(index) {
-		// control structures
+		if (_fillC) {
+			return cFill(index);
+		} else {
+			return deFill(index);
+		}
+	}
+
+	function cFill(index) {
 		if ((index + 1) % 3 === 0) {
+			return '#8A8';
+		} else {
+			return '#888';
+		}
+	}
+
+	function deFill(index) {
+		if ((index < 10 && (index - 1) % 3 === 0) || (index > 8 && index % 3 === 0)) {
 			return '#8A8';
 		} else {
 			return '#888';
@@ -166,7 +186,7 @@
 		{/if}
 		<!-- notes -->
 		{#each $notes as note (note.id)}
-			<KalimbaNote note={note} laneWidth={laneWidth} />
+			<KalimbaNote note={note} laneWidth={laneWidth} playAt={$highlightPosition} />
 		{/each}
 	</svg>
 	<section>
@@ -176,12 +196,18 @@
 			{$offset}
 			<button on:click={down}>Down</button>
 		</div>
+		<div>
+			<!-- TODO: Change Fill Types -->
+			<button on:click={() => fill(true)}>C Fill</button>
+			<button on:click={() => fill(false)}>D/E Fill</button>
+		</div>
 		<div>line: {currentPosition - $offset}, tine: {currentPositionTine} x: {x}, y: {y} </div>
-    	<progress value={$progress}></progress>
+    	<!-- TODO: <progress value={}></progress> -->
 		
+		<!-- TODO: Render text notation 
 		{#each $notes as note (note.id)}
-			<p>{note.y}</p>
-		{/each}
+			<pre class="note">{note.y}</pre>
+		{/each} -->
 	</section>
 </main>
 
@@ -194,5 +220,9 @@
 		display: block;
 		background-color: #666;
 		height: 100%;
+	}
+	.note {
+		display: inline-block;
+		margin: 0 4px;
 	}
 </style>

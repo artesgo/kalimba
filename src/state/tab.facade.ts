@@ -38,6 +38,10 @@ function play() {
         playing: true,
         paused: false,
         stopped: false,
+        notes: [...tab.notes.map(note => {
+            note.played = false;
+            return note;
+        })],
     }));
 }
 

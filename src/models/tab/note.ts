@@ -1,4 +1,5 @@
 import { Arc2d } from "../shapes/arc2d";
+import { play } from "../../utils/audio";
 
 export class Note implements Arc2d {
     constructor(
@@ -22,5 +23,8 @@ export class Note implements Arc2d {
     y: number;
     radius: number;
     interactive: boolean;
+    play() {
+        play(this.name);
+    };
+    played: boolean;
 }
-  
