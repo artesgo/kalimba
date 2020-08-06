@@ -29,7 +29,7 @@
                 });
                 setPlayed = true;
             } else if (playback.paused) {
-                y.set(initialPosition);
+                y.set($y);
                 setPlayed = false;
             } else if (playback.stopped) {
                 // console.log(initialPosition + (playback.offset * 20))
