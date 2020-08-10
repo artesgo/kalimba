@@ -51,7 +51,7 @@
 		subs.push(playback.subscribe((_playback) => {
 			if (_playback.playing) {
 				let [first] = $notes;
-				highlightPosition.set(first.y * laneWidth);
+				highlightPosition.set(first.y * laneWidth + 100);
 			}
 		}));
 	});

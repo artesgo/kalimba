@@ -22,14 +22,12 @@
     
         subs.push(playback.subscribe((playback) => {
 
-            const duration = playback.duration * 1000 / (playback.tempo / 60);
+            const duration = (playback.duration + 5) * 1000 / (playback.tempo / 60);
             if (playback.playing) {
-                setTimeout(() => {
-                    y.set(initialPosition+(playback.duration * 20), {
-                        duration
-                    });
-                    setPlayed = true;
-                }, 2000);
+                y.set(initialPosition+(playback.duration * 20)+100, {
+                    duration
+                });
+                setPlayed = true;
             } else if (playback.paused) {
                 y.set($y);
                 setPlayed = false;
@@ -44,6 +42,7 @@
             }
         }));
         
+        // requestAnimationFrame checks when a note needs to be played
 		let frame;
 		(function loop() {
 			frame = requestAnimationFrame(loop);
@@ -60,6 +59,7 @@
         subs.forEach(unsub => unsub());
     });
 
+    // this allows user to scrub through a section
     afterUpdate(() => {
         if (!setPlayed) {
             const _playAt = Math.round(playAt / 20);
