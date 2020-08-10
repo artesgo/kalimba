@@ -24,10 +24,12 @@
 
             const duration = playback.duration * 1000 / (playback.tempo / 60);
             if (playback.playing) {
-                y.set(initialPosition+(playback.duration * 20), {
-                    duration
-                });
-                setPlayed = true;
+                setTimeout(() => {
+                    y.set(initialPosition+(playback.duration * 20), {
+                        duration
+                    });
+                    setPlayed = true;
+                }, 2000);
             } else if (playback.paused) {
                 y.set($y);
                 setPlayed = false;

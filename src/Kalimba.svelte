@@ -3,7 +3,7 @@
 	import KalimbaControls from './components/KalimbaControls.svelte';
 	import KalimbaNote from './components/KalimbaNote.svelte';
 
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import { Subject } from 'rxjs';
@@ -14,7 +14,7 @@
 	import { Note } from './models/tab/note';
 	import { Rect2d } from './models/shapes/rect2d';
  
-	import { notes, offset } from './state/tab.selectors';
+	import { notes, offset, playback } from './state/tab.selectors';
 	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
 
 	let tines: Rect2d[] = [];
@@ -41,9 +41,22 @@
 	const boardWidth = (laneWidth + 1) * tineLabels.length + 40;
 	const noteLength = 4;
 
+	const subs = [];
 	onMount(() => {
 		renderTines();
 		renderHighlighter();
+
+		// 
+		subs.push(playback.subscribe((_playback) => {
+			if (_playback.playing) {
+				let [first] = $notes;
+				highlightPosition.set(first.y * 20);
+			}
+		}));
+	});
+
+	onDestroy(() => {
+		subs.forEach(unsub => unsub());
 	});
 
 	let hasNote$: Subject<boolean> = new Subject();
