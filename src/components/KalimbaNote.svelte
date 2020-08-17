@@ -12,6 +12,8 @@
     let y;
     let setPlayed = false;
     let subs = [];
+    let wasPaused = false;
+
 	onMount(() => {
         let initialPosition = getNoteY(note);
         note.play();
@@ -21,14 +23,22 @@
         });
     
         subs.push(playback.subscribe((playback) => {
-
             const duration = (playback.duration + 5) * 1000 / (playback.tempo / 60);
             if (playback.playing) {
-                y.set(initialPosition+(playback.duration * 20)+100, {
-                    duration
-                });
+                const playTo = initialPosition+(playback.duration * 20)+100
+                if (wasPaused) {
+                    wasPaused = false;
+                    const percentagePlayed = ($y - initialPosition) / (playTo - initialPosition);
+                    const remainingDuration = duration * (1 - percentagePlayed);
+                    y.set(playTo, {
+                        duration: remainingDuration
+                    });
+                } else {
+                    y.set(playTo, { duration });
+                }
                 setPlayed = true;
             } else if (playback.paused) {
+                wasPaused = true;
                 y.set($y);
                 setPlayed = false;
             } else if (playback.stopped) {
