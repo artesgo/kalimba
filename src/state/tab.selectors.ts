@@ -1,6 +1,6 @@
 import { tabStore } from "./tab.store";
 import { derived } from "svelte/store";
-import { Note } from "../models/tab/note";
+import type { Note } from "../models/tab/note";
 
 // you could think of these as selectors
 export const totalNotes = derived(

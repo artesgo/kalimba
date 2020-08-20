@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { Readable } from 'svelte/store';
+import type { Readable } from 'svelte/store';
 
 export function toObservable<T>(readable: Readable<T>): Observable<T> {
     let subject = new Subject<T>();

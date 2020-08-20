@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
     import { Note } from './../models/tab/note';
     import { playback, offset } from './../state/tab.selectors';
     import { onMount, onDestroy, afterUpdate } from 'svelte';

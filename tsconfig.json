@@ -1,16 +1,6 @@
 {
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "node_modules/*"
-    ],
-    "compilerOptions": {
-        "target": "es2017",
-        "sourceMap": true,
-        "types": [
-            "svelte"
-        ],
-        "moduleResolution": "node"
-    }
+  "extends": "@tsconfig/svelte/tsconfig.json",
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
 }

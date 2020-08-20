@@ -1,4 +1,4 @@
-import { Arc2d } from "../shapes/arc2d";
+import type { Arc2d } from "../shapes/arc2d";
 import { play } from "../../utils/audio";
 
 export class Note implements Arc2d {

@@ -1,7 +1,7 @@
 // export 
 
 import { tabStore } from "./tab.store";
-import { Note } from "../models/tab/note";
+import type { Note } from "../models/tab/note";
 
 /**
  * Update Store
@@ -29,6 +29,13 @@ function updateOffset(offset: number) {
     tabStore.update(tab => ({
         ...tab,
         offset: tab.offset + offset
+    }));
+}
+
+function updateTempo(tempo: number) {
+    tabStore.update(tab => ({
+        ...tab,
+        tempo
     }));
 }
 
@@ -67,6 +74,7 @@ export {
     insertNote,
     deleteNote,
     updateOffset,
+    updateTempo,
     play,
     stop,
     pause,

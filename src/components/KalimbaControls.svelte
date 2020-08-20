@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
 	import { play, pause, stop } from '../state/tab.facade';
     import { playback } from './../state/tab.selectors';
 </script>

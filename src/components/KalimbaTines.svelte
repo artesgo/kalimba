@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
     import { Rect2d } from "../models/shapes/rect2d";
     import { afterUpdate } from "svelte";
 

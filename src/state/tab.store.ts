@@ -1,5 +1,5 @@
 import { writable, readable } from 'svelte/store';
-import { Tab } from '../models/tab/tab';
+import type { Tab } from '../models/tab/tab';
 
 const initialState: Tab = {
     tempo: 120,

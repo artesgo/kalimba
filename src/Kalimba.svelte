@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
 	import GlobalStyles from './components/GlobalStyles.svelte';
 	import KalimbaControls from './components/KalimbaControls.svelte';
 	import KalimbaNote from './components/KalimbaNote.svelte';
@@ -21,7 +21,6 @@
 	// display height
 	export let boardHeight = 640;
 
-	let tines: Rect2d[] = [];
 	let highlight: Rect2d;
 	let tinelight: Rect2d;
 	let currentPosition = 0;
@@ -187,6 +186,13 @@
 			<button on:click={() => cFill = true}>C Fill</button>
 			<button on:click={() => cFill = false}>D/E Fill</button>
 		</div>
+		<div>
+			<label>
+				Tempo
+				<input type="number" bind:value={$playback.tempo}>
+			</label>
+		</div>
+		<!-- Debug -->
 		<div>line: {currentPosition - $offset}, tine: {currentPositionTine} x: {x}, y: {y} </div>
     	<!-- TODO: <progress value={}></progress> -->
 		

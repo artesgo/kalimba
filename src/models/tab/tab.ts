@@ -1,4 +1,4 @@
-import { Note } from "./note";
+import type { Note } from "./note";
 
 export class Tab {
     tempo: number;
