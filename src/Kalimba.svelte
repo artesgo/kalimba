@@ -7,14 +7,9 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
-	import { Subject } from 'rxjs';
-	import { take } from 'rxjs/operators';
-
 	import { truncator } from './utils/utils';
-
 	import { Note } from './models/tab/note';
 	import { Rect2d } from './models/shapes/rect2d';
- 
 	import { notes, offset, playback } from './state/tab.selectors';
 	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
 
@@ -40,13 +35,13 @@
 	});
 	const tineLabels = ['d6', 'b5', 'g5', 'e5', 'c5', 'a4', 'f4', 'd4', 'c4', 'e4', 'g4', 'b4', 'd5', 'f5', 'a5', 'c6', 'e6'];
 	const laneWidth = 20;
+	const measure = 8;
 	const noteRadius = laneWidth / 2 - 2;
 	const boardWidth = (laneWidth + 1) * tineLabels.length + 40;
-	const noteLength = 4;
 	const subs = [];
 	onMount(() => {
 		renderHighlighter();
-		bars = new Array(boardHeight / laneWidth / 8);
+		bars = new Array(boardHeight / laneWidth / measure);
 		subs.push(playback.subscribe((_playback) => {
 			if (_playback.playing) {
 				let [first] = $notes;
@@ -59,43 +54,30 @@
 		subs.forEach(unsub => unsub());
 	});
 
-	let hasNote$: Subject<boolean> = new Subject();
 	// note management
-	function hasNote(x, y): void {
-		notes.subscribe(_n => {
-			let found = _n.filter(note => note.x === x && note.y === y);
-			if (found.length > 0) {
-				hasNote$.next(true);
-			} else {
-				hasNote$.next(false);
-			}
-		});
-	}
-
 	function toggleNote(): void {
 		if (currentPositionTine > 0 && currentPositionTine <= tineLabels.length) {
-			hasNote$.pipe(
-				take(1),
-			).subscribe(_hasNote => {
-				if (!_hasNote) {
-					// TODO: currentPosition needs offset when going through the song
-					let note = new Note(
-						currentPositionTine,
-						currentPosition - $offset,
-						noteRadius, true);
-					note.name = tineLabels[currentPositionTine - 1];
-					insertNote(note);
-				} else {
-					deleteNote(currentPositionTine, currentPosition - $offset);
-				}
-			});
-			hasNote(currentPositionTine, currentPosition - $offset);
+			// subscribe listens for ongoing changes, $notes gets value at time of request
+			// in effect, it's a take(1)
+			let found = $notes.filter(note => note.x === x && note.y === y);
+			if (found.length > 0) {
+				deleteNote(currentPositionTine, currentPosition - $offset);
+			} else {
+				let note = new Note(
+					currentPositionTine,
+					currentPosition - $offset,
+					noteRadius, 
+					true
+				);
+				note.name = tineLabels[currentPositionTine - 1];
+				insertNote(note);
+			}
 		}
 	}
 
 	// cursor position
 	let x = 0; let y = 0;
-	function getPosition(event) {
+	function getPosition(event: MouseEvent) {
 		x = event.layerX;
 		y = event.layerY;
 

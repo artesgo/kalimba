@@ -36,7 +36,7 @@ function getDuration(notes: Note[]) {
     if (notes.length > 1) {
         const sorted = notes.sort((a, b) => (b.y - a.y));
         const [first, ...rest] = sorted;
-        const [last, ...other] = rest.reverse();
+        const [last] = rest.reverse();
         return first.y - last.y;
     }
     return 0;

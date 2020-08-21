@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Note } from './../models/tab/note';
+    import type { Note } from '../models/tab/note';
     import { playback, offset } from './../state/tab.selectors';
     import { onMount, onDestroy, afterUpdate } from 'svelte';
 	import { tweened } from 'svelte/motion';

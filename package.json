@@ -26,7 +26,6 @@
     "@tsconfig/svelte": "^1.0.0"
   },
   "dependencies": {
-    "rxjs": "^6.6.2",
     "sirv-cli": "^1.0.0"
   }
 }

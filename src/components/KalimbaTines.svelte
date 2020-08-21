@@ -12,16 +12,16 @@
 		createTines();
     });
 
-	function cFill(index) {
-		if ([2,5,8,11,14].indexOf(index) > -1) {
+	function cFill(i = 0) {
+		if ([2,5,8,11,14].indexOf(i) > -1) {
 			return '#8A8';
 		} else {
 			return '#888';
 		}
 	}
 
-	function deFill(index) {
-		if ([1,4,7,9,12,15].indexOf(index) > -1) {
+	function deFill(i = 0) {
+		if ([1,4,7,9,12,15].indexOf(i) > -1) {
 			return '#8A8';
 		} else {
 			return '#888';
