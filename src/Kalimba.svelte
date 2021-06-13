@@ -57,13 +57,13 @@
 	afterUpdate(() => {
 	});
 
-	let hasNote$: Subject<boolean> = new Subject();
+	// let hasNote$: Subject<boolean> = new Subject();
 	// note management
 	function toggleNote(): void {
 		if (currentPositionTine > 0 && currentPositionTine <= tineLabels.length) {
 			// subscribe listens for ongoing changes, $notes gets value at time of request
 			// in effect, it's a take(1)
-			let found = $notes.filter(note => note.x === x && note.y === y);
+			let found = $notes.filter(note => note.x === currentPositionTine && note.y === currentPosition - $offset);
 			if (found.length > 0) {
 				deleteNote(currentPositionTine, currentPosition - $offset);
 			} else {
@@ -119,6 +119,8 @@
 			updateOffset(-4);
 		}
 	}
+
+	let tempo = $playback.tempo;
 </script>
 
 <main>
@@ -175,7 +177,7 @@
 		<div>
 			<label>
 				Tempo
-				<input type="number" bind:value={$playback.tempo}>
+				<input type="number" bind:value={tempo} on:change={() => updateTempo(tempo)}>
 			</label>
 		</div>
 		<!-- Debug -->
