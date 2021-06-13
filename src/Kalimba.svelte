@@ -4,14 +4,14 @@
 	import KalimbaNote from './components/KalimbaNote.svelte';
 	import KalimbaTines from './components/KalimbaTines.svelte';
 
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, afterUpdate } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import { truncator } from './utils/utils';
 	import { Note } from './models/tab/note';
 	import { Rect2d } from './models/shapes/rect2d';
 	import { notes, offset, playback } from './state/tab.selectors';
-	import { insertNote, updateOffset, deleteNote } from './state/tab.facade';
+	import { insertNote, updateOffset, deleteNote, updateTempo } from './state/tab.facade';
 
 	// display height
 	export let boardHeight = 640;
@@ -54,6 +54,10 @@
 		subs.forEach(unsub => unsub());
 	});
 
+	afterUpdate(() => {
+	});
+
+	let hasNote$: Subject<boolean> = new Subject();
 	// note management
 	function toggleNote(): void {
 		if (currentPositionTine > 0 && currentPositionTine <= tineLabels.length) {

@@ -11,6 +11,10 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.0.0",
+    "@rollup/plugin-typescript": "^5.0.1",
+    "@tsconfig/svelte": "^1.0.10",
+    "del-cli": "^3.0.1",
+    "dotenv": "^8.2.0",
     "prettier": "^2.0.5",
     "prettier-plugin-svelte": "^1.1.0",
     "rollup": "^2.3.4",
@@ -19,12 +23,10 @@
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^6.0.0",
     "svelte": "^3.0.0",
-    "svelte-check": "^1.0.0",
-    "svelte-preprocess": "^4.0.0",
-    "@rollup/plugin-typescript": "^4.0.0",
-    "typescript": "^3.9.3",
+    "svelte-check": "^1.0.20",
+    "svelte-preprocess": "^4.1.1",
     "tslib": "^2.0.0",
-    "@tsconfig/svelte": "^1.0.0"
+    "typescript": "^3.9.7"
   },
   "dependencies": {
     "sirv-cli": "^1.0.0"
